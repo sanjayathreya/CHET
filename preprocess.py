@@ -76,7 +76,7 @@ def create_parsed_datasets(patient_dict, tablename):
 
   return patient_admission, admission_codes
 
-def generate_samples( patient_admission, admission_codes, seed):
+def generate_samples( patient_admission, admission_codes, seed, sample_size=10000):
   """Parser function to generate samples
 
   This function uses population of  paitient-admission
@@ -98,7 +98,7 @@ def generate_samples( patient_admission, admission_codes, seed):
   """
   np.random.seed(seed)
   keys = list(patient_admission.keys())
-  selected_pids = np.random.choice(keys, sample_num, False)
+  selected_pids = np.random.choice(keys, sample_size, False)
   patient_admission_sample = {pid: patient_admission[pid] for pid in selected_pids}
   admission_codes_sample = dict()
   for admissions in patient_admission_sample.values():
@@ -612,7 +612,7 @@ def preprocess(dataset_name, seed, sample_num = 1, from_cached = True):
     admission_codes = pickle.load(open(os.path.join(parsed_main_path, 'admission_codes.pkl'), 'rb'))
 
   if dataset_name == 'mimic4':
-    patient_admission, admission_codes = generate_samples(patient_admission, admission_codes, seed=seed)
+    patient_admission, admission_codes = generate_samples(patient_admission, admission_codes, seed=seed, sample_size=10000)
     print("\nsample stats for mimic4\n")
 
   max_admission_num = get_stats(patient_admission, admission_codes)
