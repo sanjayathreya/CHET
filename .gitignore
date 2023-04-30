@@ -160,5 +160,6 @@ cython_debug/
 #.idea/
 
 # mimic raw files
-data/mimic3/raw/
-data/mimic4/raw/
+/icdcodes.py
+data/mimic4/
+data/mimic3/
