@@ -556,7 +556,7 @@ def generate_parsed_datesets(dataset_name, parsed_main_path):
     )
   elif dataset_name == 'mimic4':
     diagnoses_table = 'diagnoses_icd'
-    mimic4_ds = MIMIC4Dataset(
+    ds = MIMIC4Dataset(
       root="data/mimic4/raw",
       tables=[diagnoses_table],
       code_mapping={"ICD10CM": "ICD9CM"},
