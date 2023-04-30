@@ -10,10 +10,10 @@ import numpy as np
 from collections import OrderedDict
 from pyhealth.tokenizer import Tokenizer
 from tqdm import tqdm
+from utils import format_time
+import time
 
 icd9cm = InnerMap.load("ICD9CM")
-data_path = 'data'
-ratios = (.80,.10,.10)
 
 def create_parsed_datasets(patient_dict, tablename):
   """Parser function to create base dictionaries
@@ -141,13 +141,6 @@ def save_sparse(path, x):
   idx = np.where(x > 0)
   values = x[idx]
   np.savez(path, idx=idx, values=values, shape=x.shape)
-
-def load_sparse(path):
-  data = np.load(path)
-  idx, values = data['idx'], data['values']
-  mat = np.zeros(data['shape'], dtype=values.dtype)
-  mat[tuple(idx)] = values
-  return mat
 
 def save_files(path, type="", **kwargs):
   """Helper to save files.
@@ -289,7 +282,7 @@ def generate_code_levels(code_map):
 
   return code_level_matrix
 
-def split_patients(patient_admission, admission_codes, code_map, ratios, seed=6669):
+def split_patients(patient_admission, admission_codes, code_map, ratios = (.80,.10,.10), seed=6669):
   """Split datasets into train test validation.
 
   Takes in parsed dictionary of patient_admissions, admission_codes and
@@ -541,9 +534,67 @@ def divide_disease_type_matrices(code_x, neighbors, lens):
         divided[i, j, np.array(list(m_eu)), 2] = 1
   return divided
 
+def generate_parsed_datesets(dataset_name, parsed_main_path):
+  """parse EHR datasets
+
+  Function that uses pyhleath libraty to parse EHR datasets
+
+  Parameters
+  ----------
+  dataset_name : string
+      dataset type ('mimic3' or 'mimic4')
+  Returns
+  -------
+  None
+      returns nothing.
+  """
+  if dataset_name == 'mimic3':
+    diagnoses_table = 'DIAGNOSES_ICD'
+    ds = MIMIC3Dataset(
+      root="data/mimic3/raw",
+      tables=[diagnoses_table]
+    )
+  elif dataset_name == 'mimic4':
+    diagnoses_table = 'diagnoses_icd'
+    ds = MIMIC4Dataset(
+      root="data/mimic3/raw",
+      tables=[diagnoses_table],
+      code_mapping={"ICD10CM": "ICD9CM"},
+    )
+  else:
+    raise Exception('This data type is not supported, choose $mimic3$ or $mimic4$' )
+
+  print('\nLoaded datasets in pyhealth\n')
+
+  patient_dict = ds.patients
+  patient_admission, admission_codes = create_parsed_datasets(patient_dict, diagnoses_table)
+  print("\nsaving parsed data\n")
+  save_files(parsed_main_path, patient_admission=patient_admission, admission_codes=admission_codes)
+
+  return None
 
 def preprocess(dataset_name, seed, sample_num = 1, from_cached = True):
+  """preprocess EHRdataset
 
+  Main preprocessing wrapper function that parses EHRdataset for a
+  sample and seed and saves output in encoded and standard folders
+  this function reads data from cached folders if available
+
+  Parameters
+  ----------
+  dataset_name : string
+      dataset type ('mimic3' or 'mimic4')
+  seed : string
+    dataset type ('mimic3' or 'mimic4')
+  sample_num : string
+    dataset type ('mimic3' or 'mimic4')
+  dataset_name : string
+    dataset type ('mimic3' or 'mimic4')
+  Returns
+  -------
+  None
+      returns nothing.
+  """
   data_path = 'data'
   dataset = dataset_name
   dataset_path = os.path.join(data_path, dataset)
@@ -556,34 +607,15 @@ def preprocess(dataset_name, seed, sample_num = 1, from_cached = True):
     patient_admission = pickle.load(open(os.path.join(parsed_main_path, 'patient_admission.pkl'), 'rb'))
     admission_codes = pickle.load(open(os.path.join(parsed_main_path, 'admission_codes.pkl'), 'rb'))
   else:
-    if dataset_name == 'mimic3':
-      diagnoses_table = 'DIAGNOSES_ICD'
-      ds = MIMIC3Dataset(
-        root="data/mimic3/raw",
-        tables=[diagnoses_table]
-      )
-    elif dataset_name == 'mimic4':
-      diagnoses_table = 'diagnoses_icd'
-      ds = MIMIC4Dataset(
-        root="data/mimic3/raw",
-        tables=[diagnoses_table],
-        code_mapping={"ICD10CM": "ICD9CM"},
-      )
-    else:
-      raise Exception('This data type is not supported, choose $mimic3$ or $mimic4$' )
-
-    print('\nLoaded datasets in pyhealth\n')
-
-    patient_dict = ds.patients
-    patient_admission, admission_codes = create_parsed_datasets(patient_dict, diagnoses_table)
-    max_admission_num = get_stats(patient_admission, admission_codes)
-    print("\nsaving parsed data\n")
-    save_files(parsed_main_path, patient_admission=patient_admission, admission_codes=admission_codes)
+    generate_parsed_datesets(dataset_name, parsed_main_path)
+    patient_admission = pickle.load(open(os.path.join(parsed_main_path, 'patient_admission.pkl'), 'rb'))
+    admission_codes = pickle.load(open(os.path.join(parsed_main_path, 'admission_codes.pkl'), 'rb'))
 
   if dataset_name == 'mimic4':
     patient_admission, admission_codes = generate_samples(patient_admission, admission_codes, seed=seed)
     print("\nsample stats for mimic4\n")
-    max_admission_num = get_stats(patient_admission, admission_codes)
+
+  max_admission_num = get_stats(patient_admission, admission_codes)
 
   # Generate code map and encode admission_codes
   codes = list(admission_codes.values())
@@ -599,7 +631,7 @@ def preprocess(dataset_name, seed, sample_num = 1, from_cached = True):
   print("\ncompleted code levels")
 
   # Split dataset to train , validation, test 80/10/10
-  train_pids, valid_pids, test_pids  = split_patients(patient_admission, admission_codes, code_map, ratios, seed=seed)
+  train_pids, valid_pids, test_pids  = split_patients(patient_admission, admission_codes, code_map, ratios=(.80,.10,.10), seed=seed)
   all_pids = { 'train_pids': train_pids, 'valid_pids': valid_pids, 'test_pids': test_pids }
 
   print("\nsaving encoded data\n")
@@ -636,5 +668,36 @@ def preprocess(dataset_name, seed, sample_num = 1, from_cached = True):
 
   return None
 
+if __name__ == '__main__':
 
-preprocess('mimic3', seed=1000, sample_num = 0, from_cached = False)
+    datasets = [ 'mimic3', 'mimic4']
+    seeds = [6669, 1000, 1050, 2052, 3000]
+    res = []
+    for dataset in datasets:
+      st = time.time()
+      parsed_main_path = os.path.join('data', dataset, 'parsed')
+      generate_parsed_datesets(dataset, parsed_main_path)
+      et = time.time()
+      pyhealth_parsing_time = format_time(et - st)
+      sample_time = []
+      for idx, seed in enumerate(seeds):
+        st = time.time()
+        preprocess(dataset, seed=seed, sample_num = idx, from_cached = True)
+        et = time.time()
+        cost = et-st
+        sample_time.append(cost)
+
+      result = {
+        'dataset_name': dataset,
+        'pyhealth_parsing_time': pyhealth_parsing_time,
+        'sample_time_1': sample_time[0],
+        'sample_time_2': sample_time[1],
+        'sample_time_3': sample_time[2],
+        'sample_time_4': sample_time[3],
+        'sample_time_5': sample_time[4],
+      }
+      df_ = pd.DataFrame(result, index=[0])
+      res.append(df_)
+
+    df = pd.concat(res)
+    df.to_csv('output_preprocess.csv', index=False)
