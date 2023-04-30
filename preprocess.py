@@ -674,6 +674,7 @@ if __name__ == '__main__':
     seeds = [6669, 1000, 1050, 2052, 3000]
     res = []
     for dataset in datasets:
+      print(f'\n******Preprocess {dataset}******\n')
       st = time.time()
       parsed_main_path = os.path.join('data', dataset, 'parsed')
       generate_parsed_datesets(dataset, parsed_main_path)
@@ -698,6 +699,7 @@ if __name__ == '__main__':
       }
       df_ = pd.DataFrame(result, index=[0])
       res.append(df_)
+      print(f'\n******Completed Preprocess {dataset}******\n')
 
     df = pd.concat(res)
     df.to_csv('output_preprocess.csv', index=False)
