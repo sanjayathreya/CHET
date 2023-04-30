@@ -51,7 +51,7 @@ def create_parsed_datasets(patient_dict, tablename):
           std = icd9cm.standardize(code)
           if std in icd9cm:
             diagnoses_std.append(std)
-          elif std[:1] not in ['E', 'V'] and str(float(std)) in icd9cm:
+          elif std[:1] not in ['E', 'V', 'N'] and str(float(std)) in icd9cm: #exclude No.DX
             diagnoses_std.append(str(float(std)))
             # print(f'\n code{code} using float map')
           else:
