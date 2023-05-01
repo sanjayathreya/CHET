@@ -701,4 +701,10 @@ if __name__ == '__main__':
       print(f'\n******Completed Preprocess {dataset}******\n')
 
     df = pd.concat(res)
-    df.to_csv('output_preprocess.csv', index=False)
+
+    # Write preprocessing time to output directory
+    output_dir = os.path.join('out')
+    if not os.path.exists(output_dir):
+      os.makedirs(output_dir)
+    output_file = os.path.join(output_dir,'output_preprocess.csv')
+    df.to_csv(output_file, index=False)
