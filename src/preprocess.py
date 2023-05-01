@@ -594,7 +594,7 @@ def preprocess(dataset_name, seed, sample_num = 1, from_cached = True):
   None
       returns nothing.
   """
-  data_path = os.path.join('..', 'data')
+  data_path = os.path.join('data')
   dataset = dataset_name
   dataset_path = os.path.join(data_path, dataset)
   parsed_sample_path = os.path.join(dataset_path, 'parsed', str(sample_num))
@@ -675,7 +675,7 @@ if __name__ == '__main__':
     for dataset in datasets:
       print(f'\n******Preprocess {dataset}******\n')
       st = time.time()
-      parsed_main_path = os.path.join('..','data', dataset, 'parsed')
+      parsed_main_path = os.path.join('data', dataset, 'parsed')
       generate_parsed_datesets(dataset, parsed_main_path)
       et = time.time()
       pyhealth_parsing_time = et-st
