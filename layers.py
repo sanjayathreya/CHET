@@ -21,10 +21,11 @@ class EmbeddingLayerSingleEmbedding(nn.Module):
         super().__init__()
         self.code_num = code_num
         self.embeddings = nn.Parameter(data=nn.init.xavier_uniform_(torch.empty(code_num, code_size)))
-        self.u_embeddings = nn.Parameter(data=nn.init.xavier_uniform_(torch.empty(code_num, graph_size)))
+#        self.u_embeddings = nn.Parameter(data=nn.init.xavier_uniform_(torch.empty(code_num, graph_size)))
 
     def forward(self):
-        return self.embeddings, self.u_embeddings
+#        return self.embeddings, self.u_embeddings
+        return self.embeddings
 
 
 
@@ -71,7 +72,9 @@ class GraphLayerSingleEmbedding(nn.Module):
 
         co_embeddings = self.activation(self.dense(center_embeddings + cc_embeddings + cn_embeddings))
         no_embeddings = self.activation(self.dense(neighbor_embeddings + nn_embeddings + nc_embeddings))
-        return co_embeddings, no_embeddings
+        u_embeddings = self.dense(embeddings) # added 
+#        return co_embeddings, no_embeddings
+        return co_embeddings, no_embeddings, u_embeddings
 
 class TransitionLayer(nn.Module):
     def __init__(self, code_num, graph_size, hidden_size, t_attention_size, t_output_size):

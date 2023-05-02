@@ -64,14 +64,16 @@ class ModelWithOnlySingleEmbedding(nn.Module):
         self.classifier = Classifier(hidden_size, output_size, dropout_rate, activation)
 
     def forward(self, code_x, divided, neighbors, lens):
-        embeddings, u_embeddings = self.embedding_layer()
+#        embeddings, u_embeddings = self.embedding_layer()
+        embeddings = self.embedding_layer()
         output = []
         for code_x_i, divided_i, neighbor_i, len_i in zip(code_x, divided, neighbors, lens):
             no_embeddings_i_prev = None
             output_i = []
             h_t = None
             for t, (c_it, d_it, n_it, len_it) in enumerate(zip(code_x_i, divided_i, neighbor_i, range(len_i))):
-                co_embeddings, no_embeddings = self.graph_layer(c_it, n_it, embeddings)
+#                co_embeddings, no_embeddings = self.graph_layer(c_it, n_it, embeddings)
+                co_embeddings, no_embeddings, u_embeddings = self.graph_layer(c_it, n_it, embeddings)
                 output_it, h_t = self.transition_layer(t, co_embeddings, d_it, no_embeddings_i_prev, u_embeddings, h_t)
                 no_embeddings_i_prev = no_embeddings
                 output_i.append(output_it)
