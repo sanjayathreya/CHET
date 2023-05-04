@@ -172,8 +172,10 @@ def save_files(path, type="", **kwargs):
     for key, value in kwargs.items():
       if key in ['code_x',  'code_y',  'divided', 'neighbors', 'code_adj']:
         save_sparse(os.path.join(path, key), value)
-      else:
-        np.savez(os.path.join(path, key), value)
+      elif key =='visit_lens':
+        np.savez(os.path.join(path, key), lens = value)
+      elif key == 'hf_y':
+        np.savez(os.path.join(path, key), hf_y = value)
 
   return None
 
