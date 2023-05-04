@@ -171,9 +171,15 @@ if __name__ == '__main__':
                 else:
                     restask_m.append(res)
 
+    output_dir = os.path.join('..','out')
+    if not os.path.exists(output_dir):
+      os.makedirs(output_dir)
+
     df_task_h = pd.concat(restask_h)
     # df_task_m = pd.concat(restask_m)
     #
-    df_task_h.to_csv('result_task_h.csv', index=False)
-    # df_task_m.to_csv('result_task_m.csv', index=False)
+    result_task_h = os.path.join(output_dir, 'result_task_h.csv')
+    result_task_m = os.path.join(output_dir, 'result_task_m.csv')
+    df_task_h.to_csv(result_task_h, index=False)
+    # df_task_m.to_csv(result_task_m, index=False)
 
