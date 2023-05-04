@@ -35,6 +35,6 @@ def config():
     graph_size = 32
     t_attention_size = 32
     batch_size = 32
-    epochs = 1
+    epochs = 35
 
     return config, code_size, graph_size, t_attention_size, batch_size, epochs
