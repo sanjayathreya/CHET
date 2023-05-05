@@ -97,7 +97,7 @@ def eval_hf(model, dataset, dataset_name, task_name, train_index, historical):
 if __name__ == '__main__':
 
     datasets = [ 'mimic3' , 'mimic4']  # 'mimic3' or 'eicu'
-    tasks = ['h']#,'m']  # 'm' or 'h'
+    tasks = ['h','m']  # 'm' or 'h'
     use_cuda = False
     device = torch.device('cuda' if torch.cuda.is_available() and use_cuda else 'cpu')
 
