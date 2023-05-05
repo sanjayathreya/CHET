@@ -12,33 +12,43 @@ from metrics import f1, top_k_prec_recall, calculate_occurred
 from train import historical_hot
 from sklearn.metrics import f1_score, roc_auc_score
 
-# def get_dataset_tensors(dataset):
-#     code_x      = torch.from_numpy(dataset.code_x).to(device)
-#     visit_lens  = torch.from_numpy(dataset.visit_lens).to(device=device, dtype=torch.long)
-#     divided     = torch.from_numpy(dataset.divided).to(device)
-#     y           = torch.from_numpy(dataset.y).to(device=device, dtype=torch.float32)
-#     neighbors   = torch.from_numpy(dataset.neighbors).to(device)
-#     return code_x, visit_lens, divided, y, neighbors
+def get_dataset_tensors(dataset):
+    code_x      = torch.from_numpy(dataset.code_x).to(device)
+    visit_lens  = torch.from_numpy(dataset.visit_lens).to(device=device, dtype=torch.long)
+    divided     = torch.from_numpy(dataset.divided).to(device)
+    y           = torch.from_numpy(dataset.y).to(device=device, dtype=torch.float32)
+    neighbors   = torch.from_numpy(dataset.neighbors).to(device)
+    return code_x, visit_lens, divided, y, neighbors
 
 def eval_diag(model, dataset, dataset_name, task_name, train_index, historical):
+
+    # for step in range(len(dataset)):
+    #     code_x, visit_lens, divided, y, neighbors = dataset[step]
+    # code_x, visit_lens, divided, y, neighbors = get_dataset_tensors(dataset)
+    #     output = model(code_x, divided, neighbors, visit_lens)
+    #     pred = torch.argsort(output, dim=-1, descending=True)
+    #     pred = pred.detach().cpu().numpy()
+    #     preds.append(pred)
+    #     print('\r    Evaluating step %d / %d' % (step + 1, len(dataset)), end='')
+    # preds = torch.vstack(preds).detach().cpu().numpy()
+    # f1_score = f1(labels, preds)
+    # prec, recall = top_k_prec_recall(labels, preds, ks=[10, 20, 30, 40])
+    # r1, r2 = calculate_occurred(historical, labels, preds, ks=[10, 20, 30, 40])
+    # print('\r    f1_score: %.4f --- top_k_recall: %.4f, %.4f, %.4f, %.4f  --- occurred: %.4f, %.4f, %.4f, %.4f  --- not occurred: %.4f, %.4f, %.4f, %.4f'
+    #       % (f1_score, recall[0], recall[1], recall[2], recall[3], r1[0], r1[1], r1[2], r1[3], r2[0], r2[1], r2[2], r2[3]))
     model.eval()
     labels = dataset.label()
-    preds = []
-    for step in range(len(dataset)):
-        code_x, visit_lens, divided, y, neighbors = dataset[step]
-    # code_x, visit_lens, divided, y, neighbors = get_dataset_tensors(dataset)
-        output = model(code_x, divided, neighbors, visit_lens)
-        pred = torch.argsort(output, dim=-1, descending=True)
-        pred = pred.detach().cpu().numpy()
-        preds.append(pred)
-        print('\r    Evaluating step %d / %d' % (step + 1, len(dataset)), end='')
-    preds = torch.vstack(preds).detach().cpu().numpy()
-    f1_score = f1(labels, preds)
-    prec, recall = top_k_prec_recall(labels, preds, ks=[10, 20, 30, 40])
-    r1, r2 = calculate_occurred(historical, labels, preds, ks=[10, 20, 30, 40])
-    print('\r    f1_score: %.4f --- top_k_recall: %.4f, %.4f, %.4f, %.4f  --- occurred: %.4f, %.4f, %.4f, %.4f  --- not occurred: %.4f, %.4f, %.4f, %.4f'
-          % (f1_score, recall[0], recall[1], recall[2], recall[3], r1[0], r1[1], r1[2], r1[3], r2[0], r2[1], r2[2], r2[3]))
-
+    code_x, visit_lens, divided, y, neighbors = get_dataset_tensors(dataset)
+    output = model(code_x, divided, neighbors, visit_lens)
+    pred = torch.argsort(output, dim=-1, descending=True)
+    pred = pred.detach().cpu().numpy()
+    f1_score = f1(labels, pred)
+    prec, recall = top_k_prec_recall(labels, pred, ks=[10, 20, 30, 40])
+    r1, r2 = calculate_occurred(historical, labels, pred, ks=[10, 20, 30, 40])
+    print(
+        '\r    f1_score: %.4f --- top_k_recall: %.4f, %.4f, %.4f, %.4f  --- occurred: %.4f, %.4f, %.4f, %.4f  --- not occurred: %.4f, %.4f, %.4f, %.4f'
+        % (
+        f1_score, recall[0], recall[1], recall[2], recall[3], r1[0], r1[1], r1[2], r1[3], r2[0], r2[1], r2[2], r2[3]))
     result = {
         'dataset_name' : dataset_name,
         'task_name' : task_name,
