@@ -4,7 +4,7 @@ import time
 
 import torch
 import numpy as np
-
+import pandas as pd
 from model import Model, ModelWithoutTransition, ModelWithOnlySingleEmbedding
 from utils import load_adj, EHRDataset, format_time, MultiStepLRScheduler
 from metrics import evaluate_codes, evaluate_hf
@@ -20,9 +20,9 @@ def historical_hot(code_x, code_num, lens):
 
 if __name__ == '__main__':
 
-    datasets = [ 'mimic3', 'mimic4']
+    datasets = [ 'mimic4', 'mimic3']
     tasks = ['h', 'm']
-    seeds = [6669, 1000, 1050, 2052, 3000]
+    seeds = [6669, 1000, 1050]#, 2052, 3000]
 
     use_cuda = True
     device = torch.device('cuda' if torch.cuda.is_available() and use_cuda else 'cpu')
@@ -38,7 +38,7 @@ if __name__ == '__main__':
                 torch.manual_seed(seed)
                 torch.cuda.manual_seed(seed)
 
-                dataset_path = os.path.join('..','data', dataset, 'standard', str(idx))
+                dataset_path = os.path.join('..','data', dataset, 'standard')
                 train_path = os.path.join(dataset_path, 'train')
                 valid_path = os.path.join(dataset_path, 'valid')
 
@@ -116,6 +116,7 @@ if __name__ == '__main__':
                 result = {
                     'dataset_name': dataset,
                     'sample': task,
+                    'seed#': seed,
                     'seed_idx': idx,
                     'total_params': pytorch_total_params,
                     'train_time': (train_end_time - train_start_time)
@@ -126,7 +127,7 @@ if __name__ == '__main__':
 
     df = pd.concat(res)
     # Write preprocessing time to output directory
-    output_dir = os.path.join('out')
+    output_dir = os.path.join('..','out')
     if not os.path.exists(output_dir):
       os.makedirs(output_dir)
     output_file = os.path.join(output_dir,'output_training.csv')
