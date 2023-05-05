@@ -139,7 +139,7 @@ if __name__ == '__main__':
                 print(f'code_adj size {code_num}')
 
                 test_data = EHRDataset(test_path, label=task, batch_size=batch_size, shuffle=False, device=device)
-                # test_historical = historical_hot(test_data.code_x, code_num, test_data.visit_lens)
+                test_historical = historical_hot(test_data.code_x, code_num, test_data.visit_lens)
                 train_data = EHRDataset(train_path, label=task, batch_size=batch_size, shuffle=False, device=device)
                 valid_data = EHRDataset(valid_path, label=task, batch_size=batch_size, shuffle=False, device=device)
 
