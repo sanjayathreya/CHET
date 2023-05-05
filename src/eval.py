@@ -126,68 +126,69 @@ if __name__ == '__main__':
     restask_m = []
     for dataset in datasets:
         for task in tasks:
-            print('loading test data ...')
-            dataset_path = os.path.join('..','data', dataset, 'standard', '1')
-            test_path = os.path.join(dataset_path, 'test')
-            train_path = os.path.join(dataset_path, 'train')
-            valid_path = os.path.join(dataset_path, 'valid')
-            print('loading code_adj ...')
-            code_adj = load_adj(dataset_path, device=device)
-            code_num = len(code_adj)
-            print(f'code_adj size {code_num}')
+            for idx, seed in enumerate(seeds):
+                print('loading test data ...')
+                dataset_path = os.path.join('..','data', dataset, 'standard', str(idx))
+                test_path = os.path.join(dataset_path, 'test')
+                train_path = os.path.join(dataset_path, 'train')
+                valid_path = os.path.join(dataset_path, 'valid')
+                print('loading code_adj ...')
+                code_adj = load_adj(dataset_path, device=device)
+                code_num = len(code_adj)
+                print(f'code_adj size {code_num}')
 
-            test_data = EHRDataset(test_path, label=task, batch_size=batch_size, shuffle=False, device=device)
-            # test_historical = historical_hot(test_data.code_x, code_num, test_data.visit_lens)
-            train_data = EHRDataset(train_path, label=task, batch_size=batch_size, shuffle=False, device=device)
-            valid_data = EHRDataset(valid_path, label=task, batch_size=batch_size, shuffle=False, device=device)
+                test_data = EHRDataset(test_path, label=task, batch_size=batch_size, shuffle=False, device=device)
+                # test_historical = historical_hot(test_data.code_x, code_num, test_data.visit_lens)
+                train_data = EHRDataset(train_path, label=task, batch_size=batch_size, shuffle=False, device=device)
+                valid_data = EHRDataset(valid_path, label=task, batch_size=batch_size, shuffle=False, device=device)
 
-            print(f'train {np.count_nonzero(train_data.y == 1)}')
-            print(f'test {np.count_nonzero(test_data.y == 1)}')
-            print(f'valid {np.count_nonzero(valid_data.y == 1)}')
+                print(f'train {np.count_nonzero(train_data.y == 1)}')
+                print(f'test {np.count_nonzero(test_data.y == 1)}')
+                print(f'valid {np.count_nonzero(valid_data.y == 1)}')
 
-            if dataset == 'mimic3':
-                hidden_size = task_conf[task]['hidden_size_mimic3']
-            else:
-                hidden_size = task_conf[task]['hidden_size_mimic4']
-
-            activation = torch.nn.Sigmoid()
-            evaluate_fn = task_conf[task]['evaluate_fn']
-            dropout_rate = task_conf[task]['dropout']
-
-            if task == 'm':
-                output_size = code_num
-            else:
-                output_size = 1
-
-            t_output_size = hidden_size
-            model = Model(code_num=code_num, code_size=code_size,
-                          adj=code_adj, graph_size=graph_size, hidden_size=hidden_size, t_attention_size=t_attention_size,
-                          t_output_size=t_output_size,
-                          output_size=output_size, dropout_rate=dropout_rate, activation=activation).to(device)
-
-            param_path = os.path.join('..','data', 'params', dataset, task,'0')
-
-            indices = [34]#,50,75,100]
-
-            for index in indices:
-                model_to_load = os.path.join(param_path, '%d.pt' % (index-1) )
-                model.load_state_dict(torch.load(model_to_load, map_location=device))
-                res = evaluate_fn(model, test_data, dataset, task, index, test_historical )
-                if task == 'h':
-                    restask_h.append(res)
-
+                if dataset == 'mimic3':
+                    hidden_size = task_conf[task]['hidden_size_mimic3']
                 else:
-                    restask_m.append(res)
+                    hidden_size = task_conf[task]['hidden_size_mimic4']
+
+                activation = torch.nn.Sigmoid()
+                evaluate_fn = task_conf[task]['evaluate_fn']
+                dropout_rate = task_conf[task]['dropout']
+
+                if task == 'm':
+                    output_size = code_num
+                else:
+                    output_size = 1
+
+                t_output_size = hidden_size
+                model = Model(code_num=code_num, code_size=code_size,
+                              adj=code_adj, graph_size=graph_size, hidden_size=hidden_size, t_attention_size=t_attention_size,
+                              t_output_size=t_output_size,
+                              output_size=output_size, dropout_rate=dropout_rate, activation=activation).to(device)
+
+                param_path = os.path.join('..','data', 'params', dataset, task,'0')
+
+                indices = [30]#,50,75,100]
+
+                for index in indices:
+                    model_to_load = os.path.join(param_path, '%d.pt' % (index-1) )
+                    model.load_state_dict(torch.load(model_to_load, map_location=device))
+                    res = evaluate_fn(model, test_data, dataset, task, index, test_historical )
+                    if task == 'h':
+                        restask_h.append(res)
+
+                    else:
+                        restask_m.append(res)
 
     output_dir = os.path.join('..','out')
     if not os.path.exists(output_dir):
       os.makedirs(output_dir)
 
     df_task_h = pd.concat(restask_h)
-    # df_task_m = pd.concat(restask_m)
-    #
+    df_task_m = pd.concat(restask_m)
+
     result_task_h = os.path.join(output_dir, 'result_task_h.csv')
     result_task_m = os.path.join(output_dir, 'result_task_m.csv')
     df_task_h.to_csv(result_task_h, index=False)
-    # df_task_m.to_csv(result_task_m, index=False)
+    df_task_m.to_csv(result_task_m, index=False)
 
