@@ -122,6 +122,7 @@ if __name__ == '__main__':
             'hidden_size_mimic4': 150,
         }
     }
+    seeds = [6669, 1000, 1050]  # , 2052, 3000]
     restask_h =[]
     restask_m = []
     for dataset in datasets:
