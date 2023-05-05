@@ -20,13 +20,10 @@ class EmbeddingLayerSingleEmbedding(nn.Module):
     def __init__(self, code_num, code_size, graph_size):
         super().__init__()
         self.code_num = code_num
-        self.embeddings = nn.Parameter(data=nn.init.xavier_uniform_(torch.empty(code_num, code_size)))
-        self.u_embeddings = nn.Parameter(data=nn.init.xavier_uniform_(torch.empty(code_num, graph_size)))
+        self.a_embeddings = nn.Parameter(data=nn.init.xavier_uniform_(torch.empty(code_num, code_size)))
 
     def forward(self):
-        return self.embeddings, self.u_embeddings
-
-
+        return self.c_embeddings
 
 class GraphLayer(nn.Module):
     def __init__(self, adj, code_size, graph_size):
@@ -58,12 +55,12 @@ class GraphLayerSingleEmbedding(nn.Module):
         self.dense = nn.Linear(code_size, graph_size)
         self.activation = nn.LeakyReLU()
 
-    def forward(self, code_x, neighbor, embeddings):
+    def forward(self, code_x, neighbor, a_embeddings):
         center_codes = torch.unsqueeze(code_x, dim=-1)
         neighbor_codes = torch.unsqueeze(neighbor, dim=-1)
 
-        center_embeddings = center_codes * embeddings
-        neighbor_embeddings = neighbor_codes * embeddings
+        center_embeddings = center_codes * a_embeddings
+        neighbor_embeddings = neighbor_codes * a_embeddings
         cc_embeddings = center_codes * torch.matmul(self.adj, center_embeddings)
         cn_embeddings = center_codes * torch.matmul(self.adj, neighbor_embeddings)
         nn_embeddings = neighbor_codes * torch.matmul(self.adj, neighbor_embeddings)
@@ -71,7 +68,8 @@ class GraphLayerSingleEmbedding(nn.Module):
 
         co_embeddings = self.activation(self.dense(center_embeddings + cc_embeddings + cn_embeddings))
         no_embeddings = self.activation(self.dense(neighbor_embeddings + nn_embeddings + nc_embeddings))
-        return co_embeddings, no_embeddings
+        u_embeddings = self.dense(a_embeddings)
+        return co_embeddings, no_embeddings, u_embeddings
 
 class TransitionLayer(nn.Module):
     def __init__(self, code_num, graph_size, hidden_size, t_attention_size, t_output_size):

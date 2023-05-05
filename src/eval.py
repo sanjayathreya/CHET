@@ -129,13 +129,21 @@ if __name__ == '__main__':
             print('loading test data ...')
             dataset_path = os.path.join('..','data', dataset, 'standard', '1')
             test_path = os.path.join(dataset_path, 'test')
+            train_path = os.path.join(dataset_path, 'train')
+            valid_path = os.path.join(dataset_path, 'valid')
             print('loading code_adj ...')
             code_adj = load_adj(dataset_path, device=device)
             code_num = len(code_adj)
             print(f'code_adj size {code_num}')
 
             test_data = EHRDataset(test_path, label=task, batch_size=batch_size, shuffle=False, device=device)
-            test_historical = historical_hot(test_data.code_x, code_num, test_data.visit_lens)
+            # test_historical = historical_hot(test_data.code_x, code_num, test_data.visit_lens)
+            train_data = EHRDataset(train_path, label=task, batch_size=batch_size, shuffle=False, device=device)
+            valid_data = EHRDataset(valid_path, label=task, batch_size=batch_size, shuffle=False, device=device)
+
+            print(f'train {np.count_nonzero(train_data.y == 1)}')
+            print(f'test {np.count_nonzero(test_data.y == 1)}')
+            print(f'valid {np.count_nonzero(valid_data.y == 1)}')
 
             if dataset == 'mimic3':
                 hidden_size = task_conf[task]['hidden_size_mimic3']
