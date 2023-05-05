@@ -128,7 +128,7 @@ if __name__ == '__main__':
         for task in tasks:
             for idx, seed in enumerate(seeds):
                 print('loading test data ...')
-                dataset_path = os.path.join('..','data', dataset, 'standard', str(idx))
+                dataset_path = os.path.join('..','data', dataset, 'standard')
                 test_path = os.path.join(dataset_path, 'test')
                 train_path = os.path.join(dataset_path, 'train')
                 valid_path = os.path.join(dataset_path, 'valid')
@@ -166,7 +166,7 @@ if __name__ == '__main__':
                               t_output_size=t_output_size,
                               output_size=output_size, dropout_rate=dropout_rate, activation=activation).to(device)
 
-                param_path = os.path.join('..','data', 'params', dataset, task,'0')
+                param_path = os.path.join('..','data', 'params', dataset, task,str(idx))
 
                 indices = [30]#,50,75,100]
 
