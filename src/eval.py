@@ -125,8 +125,8 @@ if __name__ == '__main__':
     seeds = [6669, 1000, 1050]  # , 2052, 3000]
     restask_h =[]
     restask_m = []
-    for dataset in datasets:
-        for task in tasks:
+    for task in tasks:
+        for dataset in datasets:
             for idx, seed in enumerate(seeds):
                 print('loading test data ...')
                 dataset_path = os.path.join('..','data', dataset, 'standard')
@@ -185,11 +185,12 @@ if __name__ == '__main__':
     if not os.path.exists(output_dir):
       os.makedirs(output_dir)
 
-    df_task_h = pd.concat(restask_h)
-    df_task_m = pd.concat(restask_m)
-
-    result_task_h = os.path.join(output_dir, 'result_task_h.csv')
-    result_task_m = os.path.join(output_dir, 'result_task_m.csv')
-    df_task_h.to_csv(result_task_h, index=False)
-    df_task_m.to_csv(result_task_m, index=False)
+    if task == 'm':
+        df_task_m = pd.concat(restask_m)
+        result_task_m = os.path.join(output_dir, 'result_task_m.csv')
+        df_task_m.to_csv(result_task_m, index=False)
+    else:
+        df_task_h = pd.concat(restask_h)
+        result_task_h = os.path.join(output_dir, 'result_task_h.csv')
+        df_task_h.to_csv(result_task_h, index=False)
 
