@@ -23,7 +23,7 @@ class EmbeddingLayerSingleEmbedding(nn.Module):
         self.a_embeddings = nn.Parameter(data=nn.init.xavier_uniform_(torch.empty(code_num, code_size)))
 
     def forward(self):
-        return self.c_embeddings
+        return self.a_embeddings
 
 class GraphLayer(nn.Module):
     def __init__(self, adj, code_size, graph_size):
