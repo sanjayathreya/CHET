@@ -596,7 +596,7 @@ def preprocess(dataset_name, seed, sample_num = 1, from_cached = True):
   None
       returns nothing.
   """
-  data_path = os.path.join('data')
+  data_path = os.path.join('..','data')
   dataset = dataset_name
   dataset_path = os.path.join(data_path, dataset)
   parsed_sample_path = os.path.join(dataset_path, 'parsed', str(sample_num))
@@ -671,8 +671,8 @@ def preprocess(dataset_name, seed, sample_num = 1, from_cached = True):
 
 if __name__ == '__main__':
 
-    datasets = [ 'mimic3', 'mimic4']
-    seeds = [6669, 1000, 1050, 2052, 3000]
+    datasets = [ 'mimic4', 'mimic3']
+    seeds = [6669]#, 1000, 1050, 2052, 3000]
     res = []
     for dataset in datasets:
       print(f'\n******Preprocess {dataset}******\n')

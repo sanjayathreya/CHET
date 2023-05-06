@@ -1,0 +1,127 @@
+dataset_name,task_name,train_index,model_name,f1_score,R@10,R@20,R@30,R@40,persistent@10,persistent@20,persistent@30,persistent@40,emerging@10,emerging@20,emerging@30,emerging@40
+mimic3,m,30,"Model(
+  (embedding_layer): EmbeddingLayer()
+  (graph_layer): GraphLayer(
+    (dense): Linear(in_features=48, out_features=32, bias=True)
+    (activation): LeakyReLU(negative_slope=0.01)
+  )
+  (transition_layer): TransitionLayer(
+    (gru): GRUCell(32, 256)
+    (single_head_attention): SingleHeadAttentionLayer(
+      (dense_q): Linear(in_features=32, out_features=32, bias=True)
+      (dense_k): Linear(in_features=32, out_features=32, bias=True)
+      (dense_v): Linear(in_features=32, out_features=256, bias=True)
+    )
+    (activation): Tanh()
+  )
+  (attention): DotProductAttention(
+    (dense): Linear(in_features=256, out_features=32, bias=True)
+  )
+  (classifier): Classifier(
+    (linear): Linear(in_features=256, out_features=2822, bias=True)
+    (activation): Sigmoid()
+    (dropout): Dropout(p=0.45, inplace=False)
+  )
+)",0.15821743892766787,0.2518444810140797,0.3320233670014981,0.3996591192369935,0.4356082755715327,0.13113704345604763,0.15586991521384327,0.16932078545865917,0.18015093799292392,0.12070743755803214,0.17615345178765465,0.23033833377833432,0.2554573375786088
+mimic3,m,30,"ModelWithOnlySingleEmbedding(
+  (embedding_layer): EmbeddingLayerSingleEmbedding()
+  (graph_layer): GraphLayerSingleEmbedding(
+    (dense): Linear(in_features=48, out_features=32, bias=True)
+    (activation): LeakyReLU(negative_slope=0.01)
+  )
+  (transition_layer): TransitionLayer(
+    (gru): GRUCell(32, 256)
+    (single_head_attention): SingleHeadAttentionLayer(
+      (dense_q): Linear(in_features=32, out_features=32, bias=True)
+      (dense_k): Linear(in_features=32, out_features=32, bias=True)
+      (dense_v): Linear(in_features=32, out_features=256, bias=True)
+    )
+    (activation): Tanh()
+  )
+  (attention): DotProductAttention(
+    (dense): Linear(in_features=256, out_features=32, bias=True)
+  )
+  (classifier): Classifier(
+    (linear): Linear(in_features=256, out_features=2822, bias=True)
+    (activation): Sigmoid()
+    (dropout): Dropout(p=0.45, inplace=False)
+  )
+)",0.15833471500604318,0.2516919112957724,0.34709654561566733,0.40743579823013293,0.4493465071568433,0.12796164055233086,0.15629139644482887,0.17866495597385365,0.18909496638343923,0.12373027074344141,0.19080514917083816,0.22877084225627908,0.2602515407734039
+mimic3,m,30,"ModelWithoutTransition(
+  (embedding_layer): EmbeddingLayer()
+  (graph_layer): GraphLayer(
+    (dense): Linear(in_features=48, out_features=32, bias=True)
+    (activation): LeakyReLU(negative_slope=0.01)
+  )
+  (attention): DotProductAttention(
+    (dense): Linear(in_features=32, out_features=32, bias=True)
+  )
+  (classifier): Classifier(
+    (linear): Linear(in_features=32, out_features=2822, bias=True)
+    (activation): Sigmoid()
+    (dropout): Dropout(p=0.45, inplace=False)
+  )
+)",0.10820273147644137,0.2203638751898683,0.31774246733031086,0.37617608574912725,0.42707123456473634,0.10672185958810759,0.1381137199520238,0.1476607329943714,0.1617133677033242,0.11364201560176077,0.17962874737828716,0.22851535275475585,0.26535786686141216
+mimic4,m,30,"Model(
+  (embedding_layer): EmbeddingLayer()
+  (graph_layer): GraphLayer(
+    (dense): Linear(in_features=48, out_features=32, bias=True)
+    (activation): LeakyReLU(negative_slope=0.01)
+  )
+  (transition_layer): TransitionLayer(
+    (gru): GRUCell(32, 350)
+    (single_head_attention): SingleHeadAttentionLayer(
+      (dense_q): Linear(in_features=32, out_features=32, bias=True)
+      (dense_k): Linear(in_features=32, out_features=32, bias=True)
+      (dense_v): Linear(in_features=32, out_features=350, bias=True)
+    )
+    (activation): Tanh()
+  )
+  (attention): DotProductAttention(
+    (dense): Linear(in_features=350, out_features=32, bias=True)
+  )
+  (classifier): Classifier(
+    (linear): Linear(in_features=350, out_features=5985, bias=True)
+    (activation): Sigmoid()
+    (dropout): Dropout(p=0.45, inplace=False)
+  )
+)",0.24942953432390852,0.30550254545417627,0.3862864728160565,0.4398147628198572,0.4798981431649361,0.2118973352001766,0.24187758422077804,0.2581397529900596,0.2681331766507453,0.09360521025399979,0.14440888859527842,0.18167500982979776,0.21176496651419113
+mimic4,m,30,"ModelWithOnlySingleEmbedding(
+  (embedding_layer): EmbeddingLayerSingleEmbedding()
+  (graph_layer): GraphLayerSingleEmbedding(
+    (dense): Linear(in_features=48, out_features=32, bias=True)
+    (activation): LeakyReLU(negative_slope=0.01)
+  )
+  (transition_layer): TransitionLayer(
+    (gru): GRUCell(32, 350)
+    (single_head_attention): SingleHeadAttentionLayer(
+      (dense_q): Linear(in_features=32, out_features=32, bias=True)
+      (dense_k): Linear(in_features=32, out_features=32, bias=True)
+      (dense_v): Linear(in_features=32, out_features=350, bias=True)
+    )
+    (activation): Tanh()
+  )
+  (attention): DotProductAttention(
+    (dense): Linear(in_features=350, out_features=32, bias=True)
+  )
+  (classifier): Classifier(
+    (linear): Linear(in_features=350, out_features=5985, bias=True)
+    (activation): Sigmoid()
+    (dropout): Dropout(p=0.45, inplace=False)
+  )
+)",0.25197910403933177,0.30267340365054946,0.39046916634540013,0.4450470780229993,0.4831304758177092,0.20986403683849933,0.24412320171595106,0.25927457020652334,0.26920647950079013,0.09280936681205,0.14634596462944943,0.18577250781647553,0.21392399631691872
+mimic4,m,30,"ModelWithoutTransition(
+  (embedding_layer): EmbeddingLayer()
+  (graph_layer): GraphLayer(
+    (dense): Linear(in_features=48, out_features=32, bias=True)
+    (activation): LeakyReLU(negative_slope=0.01)
+  )
+  (attention): DotProductAttention(
+    (dense): Linear(in_features=32, out_features=32, bias=True)
+  )
+  (classifier): Classifier(
+    (linear): Linear(in_features=32, out_features=5985, bias=True)
+    (activation): Sigmoid()
+    (dropout): Dropout(p=0.45, inplace=False)
+  )
+)",0.15991691924692578,0.24449605742768885,0.3248655665843741,0.3829669302025344,0.4242807736310689,0.16237562942912226,0.19500872462240773,0.2150902909849679,0.2284971577976188,0.08212042799856578,0.1298568419619662,0.16787663921756665,0.19578361583344972

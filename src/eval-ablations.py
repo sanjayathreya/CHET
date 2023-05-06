@@ -6,7 +6,7 @@ import torch
 import numpy as np
 import pandas as pd
 
-from model import Model
+from model import Model, ModelWithoutTransition, ModelWithOnlySingleEmbedding
 from utils import load_adj, EHRDataset, format_time
 from metrics import f1, top_k_prec_recall, calculate_occurred
 from train import historical_hot
@@ -20,7 +20,7 @@ def get_dataset_tensors(dataset):
     neighbors   = torch.from_numpy(dataset.neighbors).to(device)
     return code_x, visit_lens, divided, y, neighbors
 
-def eval_diag(model, dataset, dataset_name, task_name, train_index, historical, model_idx):
+def eval_diag(model, dataset, dataset_name, task_name, train_index, historical, model_name):
     model.eval()
     labels = dataset.label()
     code_x, visit_lens, divided, y, neighbors = get_dataset_tensors(dataset)
@@ -38,7 +38,7 @@ def eval_diag(model, dataset, dataset_name, task_name, train_index, historical, 
         'dataset_name' : dataset_name,
         'task_name' : task_name,
         'train_index' : train_index,
-        'model_index': model_idx,
+        'model_name': model_name,
         'f1_score': f1_score,
         'R@10': recall[0],
         'R@20': recall[1],
@@ -57,7 +57,7 @@ def eval_diag(model, dataset, dataset_name, task_name, train_index, historical, 
     return df
 
 
-def eval_hf(model, dataset, dataset_name, task_name, train_index, historical, model_idx):
+def eval_hf(model, dataset, dataset_name, task_name, train_index, historical, model_name):
     model.eval()
     labels = dataset.label()
     outputs = []
@@ -84,7 +84,7 @@ def eval_hf(model, dataset, dataset_name, task_name, train_index, historical, mo
         'dataset_name' : dataset_name,
         'task_name' : task_name,
         'train_index' : train_index,
-        'model_index': model_idx,
+         'model_name': model_name,
         'auc': auc,
         'f1_score': f1_score_
     }
@@ -94,7 +94,7 @@ def eval_hf(model, dataset, dataset_name, task_name, train_index, historical, mo
 if __name__ == '__main__':
 
     datasets = [ 'mimic3' , 'mimic4']  # 'mimic3' or 'eicu'
-    tasks = ['h','m']  # 'm' or 'h'
+    tasks = ['h']#,'m']  # 'm' or 'h'
     use_cuda = False
     device = torch.device('cuda' if torch.cuda.is_available() and use_cuda else 'cpu')
 
@@ -120,12 +120,12 @@ if __name__ == '__main__':
         }
     }
     seeds = [6669]  # , 2052, 3000]
-    models = [1,2,3]
+    models = ['base-model', 'ablation1', 'ablation2']
     restask_h =[]
     restask_m = []
     for task in tasks:
         for dataset in datasets:
-            for idx, models in enumerate(models):
+            for idx, _model in enumerate(models):
                 print('loading test data ...')
                 dataset_path = os.path.join('..','data', dataset, 'standard')
                 test_path = os.path.join(dataset_path, 'test')
@@ -193,7 +193,7 @@ if __name__ == '__main__':
                 for index in indices:
                     model_to_load = os.path.join(param_path, '%d.pt' % (index-1) )
                     model.load_state_dict(torch.load(model_to_load, map_location=device))
-                    res = evaluate_fn(model, test_data, dataset, task, index, test_historical, idx )
+                    res = evaluate_fn(model, test_data, dataset, task, index, test_historical, _model )
                     if task == 'h':
                         restask_h.append(res)
 
@@ -206,10 +206,10 @@ if __name__ == '__main__':
 
     if task == 'm':
         df_task_m = pd.concat(restask_m)
-        result_task_m = os.path.join(output_dir, 'result_task_m.csv')
+        result_task_m = os.path.join(output_dir, 'result_ablations_task_m.csv')
         df_task_m.to_csv(result_task_m, index=False)
-    else:
+    elif task == 'h':
         df_task_h = pd.concat(restask_h)
-        result_task_h = os.path.join(output_dir, 'result_task_h.csv')
+        result_task_h = os.path.join(output_dir, 'result_ablations_task_h.csv')
         df_task_h.to_csv(result_task_h, index=False)
 

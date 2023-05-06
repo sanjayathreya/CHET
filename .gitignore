@@ -161,6 +161,6 @@ cython_debug/
 
 # mimic raw files
 /icdcodes.py
-data/mimic3
-data/mimic4
+data/mimic3/raw
+data/mimic4/raw
 data/icd9.txt
