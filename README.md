@@ -183,7 +183,7 @@ Please check the Jupyter Notebook [here](/content/CHET/notebook/Descriptive-Note
 
 
 
-Further analysis can be found at the Jupyter Notebook [here](./src/Result-Analysis.ipynb).
+Further analysis can be found at the Jupyter Notebook [here](https://github.com/sanjayathreya/cs598dl4h-project/blob/main/src/Descriptive-Notebook.ipynb).
 
 ## Credits
 
