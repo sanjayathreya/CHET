@@ -599,10 +599,10 @@ def preprocess(dataset_name, seed, sample_num = 1, from_cached = True):
   data_path = os.path.join('..','data')
   dataset = dataset_name
   dataset_path = os.path.join(data_path, dataset)
-  parsed_sample_path = os.path.join(dataset_path, 'parsed', str(sample_num))
+  parsed_sample_path = os.path.join(dataset_path, 'parsed')
   parsed_main_path = os.path.join(data_path, dataset, 'parsed')
-  encoded_path = os.path.join(dataset_path, 'encoded', str(sample_num))
-  standard_path = os.path.join(dataset_path, 'standard', str(sample_num))
+  encoded_path = os.path.join(dataset_path, 'encoded')
+  standard_path = os.path.join(dataset_path, 'standard')
 
   if from_cached:
     patient_admission = pickle.load(open(os.path.join(parsed_main_path, 'patient_admission.pkl'), 'rb'))
@@ -692,11 +692,7 @@ if __name__ == '__main__':
       result = {
         'dataset_name': dataset,
         'pyhealth_parsing_time': pyhealth_parsing_time,
-        'sample_time_1': sample_time[0],
-        'sample_time_2': sample_time[1],
-        'sample_time_3': sample_time[2],
-        'sample_time_4': sample_time[3],
-        'sample_time_5': sample_time[4],
+        'sample_time': sample_time[0],
       }
       df_ = pd.DataFrame(result, index=[0])
       res.append(df_)
