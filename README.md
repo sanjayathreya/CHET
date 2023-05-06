@@ -27,8 +27,6 @@
   - `params/`: Trained model parameters for mimic3,mimic4, 3 seeds, heart failure and diagnoses prediction tasks
   - `params-ablation1/`: Ablation1 model parameters
   - `params-ablation2.`: Ablation2 model parameters
-- `notebooks/`
-  - `Descriptive-Notebook.ipynb`: Descriptive notebook to explain steps involved
 - `src`
   - `attention.py`: attention models
   - `config.py`: configuration for datasets and tasks 
@@ -39,6 +37,7 @@
   - `preprocess.py`: preprocessing module refactored based on pyhealth api
   - `train.py`: module for training models
   - `utils.py`: module of utility functions
+  - `Descriptive-Notebook.ipynb`: Descriptive notebook to explain steps involved
 - `out`:
   - `output_preprocess.csv` : output file from preprocessing.py
   - `output_training.csv`: output file from train.py for 'base-model'
@@ -167,20 +166,20 @@ Please check the Jupyter Notebook [here](/content/CHET/notebook/Descriptive-Note
 
 **Heart Failure prediction task**
 
-|        | MIMICIII    |             | MIMICIV     |             |
-| ------ | ----------- | ----------- | ----------- | ----------- |
-| Models | AUC         | F1          | AUC         | F1          |
-| Chet   |       86.14 |       73.08 | 90.83       | 71.14       |
-| Chet\* |       76.79 |       66.18 |       94.78 |       94.78 |
+|        | MIMICIII    |             | MIMICIV     |       |
+| ------ | ----------- | ----------- | ----------- |-------|
+| Models | AUC         | F1          | AUC         | F1    |
+| Chet   |       86.14 |       73.08 | 90.83       | 71.14 |
+| Chet\* |       76.79 |       66.18 |       94.78 | 79.93 |
 
 
 **Diagnosis prediction task**
 
-|        |             | MIMICIII  |        |       | MIMICIV   | 	        |
-| ------ | ----------- |-----------|--------|-------| --------- |----------|
-| Models | W-f1        | [R@10     | R@20   | W-f1  | R@10      | R@20     |
-| Chet   |       22.63 | 28.64     | 37.87  | 26.35 | 30.28     | 38.69    |
-| Chet\* |       16.07 | 25.04     | 33.84  | 25.12 | 30.66     | 39.15    |
+|        |             | MIMICIII |        |       | MIMICIV   | 	      |
+| ------ | ----------- |----------|--------|-------| --------- |--------|
+| Models | W-f1        | R@10     | R@20   | W-f1  | R@10      | R@20   |
+| Chet   |       22.63 | 28.64    | 37.87  | 26.35 | 30.28     | 38.69  |
+| Chet\* |       16.07 | 25.04    | 33.84  | 25.12 | 30.66     | 39.15  |
 
 
 
