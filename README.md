@@ -52,22 +52,22 @@
 - `requirements.txt`: dependent libraries
 - `README.md`
 
-After the processing have been done, we get the following statistics:
+After the processing is complete, we get the following statistics:
 
 ```bash
-# patients  6350
-# clinical events  15032
-# diagnosis  1958
-# med  112
-# procedure 1430
-# avg of diagnoses  10.5089143161256
-# avg of medicines  11.647751463544438
-# avg of procedures  3.8436668440659925
-# avg of vists  2.367244094488189
-# max of diagnoses  128
-# max of medicines  64
-# max of procedures  50
-# max of visit  29
+# mimic3-carevue
+# patient num: 2169
+# max admission num: 23
+# mean admission num: 2.45
+# max code num in an admission: 39
+# mean code num in an admission: 10.70
+
+# mimic4 sample
+# patient num: 10000
+# max admission num: 93
+# mean admission num: 3.79
+# max code num in an admission: 39
+# mean code num in an admission: 13.51
 ```
 
 ## Execution
