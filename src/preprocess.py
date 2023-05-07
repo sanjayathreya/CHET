@@ -606,7 +606,7 @@ def generate_parsed_datesets(dataset_name, parsed_main_path, ret_value = False):
   print("\nsaving parsed data\n")
   save_files(parsed_main_path, patient_admission=patient_admission, admission_codes=admission_codes)
   if ret_value:
-    return patient_admission, admission_codes,ds
+    return patient_admission, admission_codes
   else:
     return None
 
