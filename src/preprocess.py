@@ -549,6 +549,7 @@ def generate_parsed_datesets(dataset_name, parsed_main_path, ret_value = False):
   None
       returns nothing.
   """
+  print(f'operating on path {os.getcwd()}\n')
   if dataset_name == 'mimic3':
     diagnoses_table = 'DIAGNOSES_ICD'
     ds = MIMIC3Dataset(
@@ -679,7 +680,7 @@ if __name__ == '__main__':
     for dataset in datasets:
       print(f'\n******Preprocess {dataset}******\n')
       st = time.time()
-      parsed_main_path = os.path.join('data', dataset, 'parsed')
+      parsed_main_path = os.path.join('..','data', dataset, 'parsed')
       generate_parsed_datesets(dataset, parsed_main_path)
       et = time.time()
       pyhealth_parsing_time = et-st
@@ -703,7 +704,7 @@ if __name__ == '__main__':
     df = pd.concat(res)
 
     # Write preprocessing time to output directory
-    output_dir = os.path.join('out')
+    output_dir = os.path.join('..','out')
     if not os.path.exists(output_dir):
       os.makedirs(output_dir)
     output_file = os.path.join(output_dir,'output_preprocess.csv')
