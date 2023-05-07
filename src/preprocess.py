@@ -553,13 +553,13 @@ def generate_parsed_datesets(dataset_name, parsed_main_path, ret_value = False):
   if dataset_name == 'mimic3':
     diagnoses_table = 'DIAGNOSES_ICD'
     ds = MIMIC3Dataset(
-      root="data/mimic3/raw",
+      root="../data/mimic3/raw",
       tables=[diagnoses_table]
     )
   elif dataset_name == 'mimic4':
     diagnoses_table = 'diagnoses_icd'
     ds = MIMIC4Dataset(
-      root="data/mimic4/raw",
+      root="../data/mimic4/raw",
       tables=[diagnoses_table],
       code_mapping={"ICD10CM": "ICD9CM"},
     )
