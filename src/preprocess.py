@@ -535,7 +535,7 @@ def divide_disease_type_matrices(code_x, neighbors, lens):
         divided[i, j, np.array(list(m_eu)), 2] = 1
   return divided
 
-def generate_parsed_datesets(dataset_name, parsed_main_path):
+def generate_parsed_datesets(dataset_name, parsed_main_path, ret_value = False):
   """parse EHR datasets
 
   Function that uses pyhleath libraty to parse EHR datasets
@@ -571,8 +571,10 @@ def generate_parsed_datesets(dataset_name, parsed_main_path):
   patient_admission, admission_codes = create_parsed_datasets(patient_dict, diagnoses_table)
   print("\nsaving parsed data\n")
   save_files(parsed_main_path, patient_admission=patient_admission, admission_codes=admission_codes)
-
-  return None
+  if ret_value:
+    return patient_admission, admission_codes
+  else:
+    return None
 
 def preprocess(dataset_name, seed, sample_num = 1, from_cached = True):
   """preprocess EHRdataset
