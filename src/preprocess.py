@@ -551,7 +551,7 @@ def divide_disease_type_matrices(code_x, neighbors, lens):
   """
   n = len(code_x)
   divided = np.zeros((*code_x.shape, 3), dtype=bool)
-  for i, admissions in enumerate(tqdm(code_x, desc="generating divided transition matrices m_p,m_en,m_eu")):
+  for i, admissions in enumerate(tqdm(code_x, desc="generating divided matrices local, bipertite diagnoses-neighbor m_p,m_en,m_eu")):
     divided[i, 0, :, 0] = admissions[0]
     for j in range(1, lens[i]):
       codes_set = set(np.where(admissions[j] == 1)[0])
