@@ -111,27 +111,8 @@ if __name__ == '__main__':
     use_cuda = False
     device = torch.device('cuda' if torch.cuda.is_available() and use_cuda else 'cpu')
 
-    # Model Parameters
-    code_size = 48
-    graph_size = 32
-    t_attention_size = 32
-    batch_size = 1
-    epochs = 200
+    config, code_size, graph_size, t_attention_size, batch_size, epochs = config()
 
-    task_conf = {
-        'm': {
-            'dropout': 0.45,
-            'evaluate_fn': eval_diag,
-            'hidden_size_mimic3': 256,
-            'hidden_size_mimic4': 350,
-        },
-        'h': {
-            'dropout': 0.0,
-            'evaluate_fn': eval_hf,
-            'hidden_size_mimic3': 100,
-            'hidden_size_mimic4': 150,
-        }
-    }
     seeds = [6669, 1000, 1050]  # , 2052, 3000]
     restask_h =[]
     restask_m = []
@@ -157,19 +138,16 @@ if __name__ == '__main__':
                 print(f'test {np.count_nonzero(test_data.y == 1)}')
                 print(f'valid {np.count_nonzero(valid_data.y == 1)}')
 
-                if dataset == 'mimic3':
-                    hidden_size = task_conf[task]['hidden_size_mimic3']
-                else:
-                    hidden_size = task_conf[task]['hidden_size_mimic4']
-
+                hidden_size = config[task]['hidden_size'][dataset]
                 activation = torch.nn.Sigmoid()
-                evaluate_fn = task_conf[task]['evaluate_fn']
-                dropout_rate = task_conf[task]['dropout']
+                dropout_rate = config[task]['dropout']
 
                 if task == 'm':
                     output_size = code_num
+                    evaluate_fn = eval_diag
                 else:
                     output_size = 1
+                    evaluate_fn = eval_hf
 
                 t_output_size = hidden_size
                 model = Model(code_num=code_num, code_size=code_size,

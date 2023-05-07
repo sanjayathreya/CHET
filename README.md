@@ -154,11 +154,7 @@ After the processing is complete, we get the following statistics:
   !python eval-ablations.py
   ```
 
-### Step 4: Analysis of the results
-
-Please check the Jupyter Notebook [here](/content/CHET/notebook/Descriptive-Notebook.ipynb).
-
-## Results
+## Analysis and Results
 
 - For MIMIC III we have used a different dataset so its not suprising results look different to the ones produced by authors
 - Chet references output as published in the paper
