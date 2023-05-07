@@ -136,6 +136,39 @@ def get_stats( patient_admission, admission_codes):
 
   return max_admission_num
 
+
+def get_stats_df(patient_admission, admission_codes):
+  """Helper function to return stats.
+
+  Function that returns stats of parsed datasets
+
+  Parameters
+  ----------
+  patient_admission : dict
+      patient to admission dictionary.
+  admission_codes : dict
+      admission to diagnosis codes dictionary.
+  Returns
+  -------
+  int
+      max_admission_num - maximum number of admissions.
+  """
+  patient_num = len(patient_admission)
+  max_admission_num = max([len(admissions) for admissions in patient_admission.values()])
+  avg_admission_num = sum([len(admissions) for admissions in patient_admission.values()]) / patient_num
+  max_visit_code_num = max([len(codes) for codes in admission_codes.values()])
+  avg_visit_code_num = sum([len(codes) for codes in admission_codes.values()]) / len(admission_codes)
+
+  result = {
+    '# patients': patient_num,
+    '# maximum visits': max_admission_num,
+    'average # visits': avg_admission_num,
+    'max # diagnoses codes': max_visit_code_num,
+    'avg # diagnoses codes': avg_visit_code_num
+  }
+  df = pd.DataFrame(result, index=[0])
+  return df
+
 def save_sparse(path, x):
   idx = np.where(x > 0)
   values = x[idx]
