@@ -4,7 +4,16 @@
 
 - Paper
   - ID: 28
-  - Chang Lu, Tian Han, and Yue Ning. 2021a. **Context- aware health event prediction via transition functions on dynamic disease graphs.** *ArXiv* abs/2112.05195
+  - Context- aware health event prediction via transition functions on dynamic disease graphs
+  - Citation below
+  ```text
+  @article{Lu2021ContextawareHE,
+    title={Context-aware Health Event Prediction via Transition Functions on Dynamic Disease Graphs},
+    author={Chang Lu and Tian Han and Yue Ning},
+    journal={ArXiv},
+    year={2021},
+    volume={abs/2112.05195}
+  ```
   - Original Code Repository: https://github.com/LuChang-CS/Chet
 - Group
   - ID: 130
