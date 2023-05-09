@@ -146,7 +146,7 @@ After the processing is complete, we get the following statistics:
 ### Step 3: Training 
 
 - train.py also has the type of model to be used i.e. base-model, ablation1, ablation2
-- Change the code to select an appropriate model
+- Change the code to select an appropriate model or **all models for if we need to run ablation studies**
 - Run the following command
   ```
   %cd /content/CHET/src/
@@ -156,11 +156,11 @@ After the processing is complete, we get the following statistics:
 ### Step 3: Evaluate 
 
 - We can run evaluation of base-models on both datasets, for both tasks and ablation studies
-
+- Before running ablation evaluation ensure training is done as described above
   ```
   %cd /content/CHET/src/
   !python eval.py
-  !python eval-ablations.py
+  !python eval-ablations.py 
   ```
 
 ## Analysis and Results
