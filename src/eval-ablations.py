@@ -11,6 +11,7 @@ from utils import load_adj, EHRDataset, format_time
 from metrics import f1, top_k_prec_recall, calculate_occurred
 from train import historical_hot
 from sklearn.metrics import f1_score, roc_auc_score
+from config import config
 
 def get_dataset_tensors(dataset):
     code_x      = torch.from_numpy(dataset.code_x).to(device)
@@ -60,31 +61,17 @@ def eval_diag(model, dataset, dataset_name, task_name, train_index, historical, 
 def eval_hf(model, dataset, dataset_name, task_name, train_index, historical, model_name):
     model.eval()
     labels = dataset.label()
-    outputs = []
-    preds = []
-    for step in range(len(dataset)):
-        code_x, visit_lens, divided, y, neighbors = dataset[step]
-        output = model(code_x, divided, neighbors, visit_lens).squeeze()
-        output = output.detach().cpu().numpy()
-        outputs.append(output)
-        pred = (output > 0.5).astype(int)
-        preds.append(pred)
-        print('\r    Evaluating step %d / %d' % (step + 1, len(dataset)), end='')
-    # pred = (output > 0.5).astype(int)
-    # auc = roc_auc_score(labels, output)
-    # f1_score_ = f1_score(labels, pred)
-    outputs = np.array(outputs)
-    preds = np.array(preds)
-    # outputs = np.concatenate(outputs)
-    # preds = np.concatenate(preds)
-    auc = roc_auc_score(labels, outputs)
-    f1_score_ = f1_score(labels, preds)
+    code_x, visit_lens, divided, y, neighbors = get_dataset_tensors(dataset)
+    output = model(code_x, divided, neighbors, visit_lens).squeeze()
+    output = output.detach().cpu().numpy()
+    pred = (output > 0.5).astype(int)
+    auc = roc_auc_score(labels, output)
+    f1_score_ = f1_score(labels, pred)
     print('\r    auc: %.4f --- f1_score: %.4f' % (auc, f1_score_))
     result = {
         'dataset_name' : dataset_name,
         'task_name' : task_name,
         'train_index' : train_index,
-         'model_name': model_name,
         'auc': auc,
         'f1_score': f1_score_
     }
@@ -99,26 +86,8 @@ if __name__ == '__main__':
     device = torch.device('cuda' if torch.cuda.is_available() and use_cuda else 'cpu')
 
     # Model Parameters
-    code_size = 48
-    graph_size = 32
-    t_attention_size = 32
-    batch_size = 1
-    epochs = 200
+    config, code_size, graph_size, t_attention_size, batch_size, epochs = config()
 
-    task_conf = {
-        'm': {
-            'dropout': 0.45,
-            'evaluate_fn': eval_diag,
-            'hidden_size_mimic3': 256,
-            'hidden_size_mimic4': 350,
-        },
-        'h': {
-            'dropout': 0.0,
-            'evaluate_fn': eval_hf,
-            'hidden_size_mimic3': 100,
-            'hidden_size_mimic4': 150,
-        }
-    }
     seeds = [6669]  # , 2052, 3000]
     models = ['base-model', 'ablation1', 'ablation2']
     restask_h =[]
@@ -145,19 +114,16 @@ if __name__ == '__main__':
                 print(f'test {np.count_nonzero(test_data.y == 1)}')
                 print(f'valid {np.count_nonzero(valid_data.y == 1)}')
 
-                if dataset == 'mimic3':
-                    hidden_size = task_conf[task]['hidden_size_mimic3']
-                else:
-                    hidden_size = task_conf[task]['hidden_size_mimic4']
-
+                hidden_size = config[task]['hidden_size'][dataset]
                 activation = torch.nn.Sigmoid()
-                evaluate_fn = task_conf[task]['evaluate_fn']
-                dropout_rate = task_conf[task]['dropout']
+                dropout_rate = config[task]['dropout']
 
                 if task == 'm':
                     output_size = code_num
+                    evaluate_fn = eval_diag
                 else:
                     output_size = 1
+                    evaluate_fn = eval_hf
 
                 t_output_size = hidden_size
 

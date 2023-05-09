@@ -20,7 +20,7 @@ def historical_hot(code_x, code_num, lens):
 
 if __name__ == '__main__':
 
-    models = 'base-model' # 'base-model', 'ablation1', 'ablation2'
+    _model = 'base-model' # 'base-model', 'ablation1', 'ablation2'
     datasets = [ 'mimic4', 'mimic3']
     tasks = ['h', 'm']
     seeds = [6669, 1000, 1050]
@@ -65,7 +65,7 @@ if __name__ == '__main__':
                 hidden_size = config[task]['hidden_size'][dataset]
                 t_output_size = hidden_size
 
-                if model == 'base-model':
+                if _model == 'base-model':
                     print('Calling Base Model')
                     param_path = os.path.join('..','data', 'params', dataset, task, str(idx))
                     model = Model(code_num=code_num, code_size=code_size,
@@ -74,7 +74,7 @@ if __name__ == '__main__':
                                   t_output_size=t_output_size,
                                   output_size=output_size, dropout_rate=dropout_rate, activation=activation).to(device)
 
-                elif model == 'ablation1':
+                elif _model == 'ablation1':
                     param_path = os.path.join('..', 'data', 'params-ablation1', dataset, task, str(idx))
                     print('Calling Model With only Single Embedding')
                     model = ModelWithOnlySingleEmbedding(code_num=code_num, code_size=code_size,
@@ -151,11 +151,11 @@ if __name__ == '__main__':
     output_dir = os.path.join('..','out')
     if not os.path.exists(output_dir):
       os.makedirs(output_dir)
-    if model == 'base-model':
+    if _model == 'base-model':
         output_file = os.path.join(output_dir,'output_training.csv')
-    elif model == 'ablation1':
+    elif _model == 'ablation1':
         output_file = os.path.join(output_dir,'output_training-ablation1.csv')
-    elif model == 'ablation2':
+    elif _model == 'ablation2':
         output_file = os.path.join(output_dir,'output_training-ablation2.csv')
 
     df.to_csv(output_file, index=False)

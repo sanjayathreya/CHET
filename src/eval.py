@@ -11,6 +11,7 @@ from utils import load_adj, EHRDataset, format_time
 from metrics import f1, top_k_prec_recall, calculate_occurred
 from train import historical_hot
 from sklearn.metrics import f1_score, roc_auc_score
+from config import config
 
 def get_dataset_tensors(dataset):
     code_x      = torch.from_numpy(dataset.code_x).to(device)
@@ -22,20 +23,6 @@ def get_dataset_tensors(dataset):
 
 def eval_diag(model, dataset, dataset_name, task_name, train_index, historical):
 
-    # for step in range(len(dataset)):
-    #     code_x, visit_lens, divided, y, neighbors = dataset[step]
-    # code_x, visit_lens, divided, y, neighbors = get_dataset_tensors(dataset)
-    #     output = model(code_x, divided, neighbors, visit_lens)
-    #     pred = torch.argsort(output, dim=-1, descending=True)
-    #     pred = pred.detach().cpu().numpy()
-    #     preds.append(pred)
-    #     print('\r    Evaluating step %d / %d' % (step + 1, len(dataset)), end='')
-    # preds = torch.vstack(preds).detach().cpu().numpy()
-    # f1_score = f1(labels, preds)
-    # prec, recall = top_k_prec_recall(labels, preds, ks=[10, 20, 30, 40])
-    # r1, r2 = calculate_occurred(historical, labels, preds, ks=[10, 20, 30, 40])
-    # print('\r    f1_score: %.4f --- top_k_recall: %.4f, %.4f, %.4f, %.4f  --- occurred: %.4f, %.4f, %.4f, %.4f  --- not occurred: %.4f, %.4f, %.4f, %.4f'
-    #       % (f1_score, recall[0], recall[1], recall[2], recall[3], r1[0], r1[1], r1[2], r1[3], r2[0], r2[1], r2[2], r2[3]))
     model.eval()
     labels = dataset.label()
     code_x, visit_lens, divided, y, neighbors = get_dataset_tensors(dataset)
@@ -74,25 +61,12 @@ def eval_diag(model, dataset, dataset_name, task_name, train_index, historical):
 def eval_hf(model, dataset, dataset_name, task_name, train_index, historical):
     model.eval()
     labels = dataset.label()
-    outputs = []
-    preds = []
-    for step in range(len(dataset)):
-        code_x, visit_lens, divided, y, neighbors = dataset[step]
-        output = model(code_x, divided, neighbors, visit_lens).squeeze()
-        output = output.detach().cpu().numpy()
-        outputs.append(output)
-        pred = (output > 0.5).astype(int)
-        preds.append(pred)
-        print('\r    Evaluating step %d / %d' % (step + 1, len(dataset)), end='')
-    # pred = (output > 0.5).astype(int)
-    # auc = roc_auc_score(labels, output)
-    # f1_score_ = f1_score(labels, pred)
-    outputs = np.array(outputs)
-    preds = np.array(preds)
-    # outputs = np.concatenate(outputs)
-    # preds = np.concatenate(preds)
-    auc = roc_auc_score(labels, outputs)
-    f1_score_ = f1_score(labels, preds)
+    code_x, visit_lens, divided, y, neighbors = get_dataset_tensors(dataset)
+    output = model(code_x, divided, neighbors, visit_lens).squeeze()
+    output = output.detach().cpu().numpy()
+    pred = (output > 0.5).astype(int)
+    auc = roc_auc_score(labels, output)
+    f1_score_ = f1_score(labels, pred)
     print('\r    auc: %.4f --- f1_score: %.4f' % (auc, f1_score_))
     result = {
         'dataset_name' : dataset_name,
