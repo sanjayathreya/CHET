@@ -88,7 +88,7 @@ After the processing is complete, we get the following statistics:
 
   ```
   !git clone https://github.com/sanjayathreya/cs598dl4h-project
-  !pip install requirements.txt
+  !pip install -r requirements.txt
   !mv /content/cs598dl4h-project /content/CHET
   !mkdir -p /content/CHET/data/mimic3/raw/
   !mkdir -p /content/CHET/data/mimic4/raw/
